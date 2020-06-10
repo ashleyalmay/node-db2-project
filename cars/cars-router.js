@@ -5,44 +5,45 @@ const db = require("../data/connection.js");
 const router = express.Router();
 
 router.get("/", (req, res) => {
-  db("fruits")
-    .then(fruits => {
-      res.json(fruits);
+  db("cars")
+    .then(cars => {
+      res.json(cars);
     })
     .catch(err => {
-      res.status(500).json({ message: "Failed to retrieve fruits" });
+      res.status(500).json({ message: "Failed to retrieve cars" });
     });
 });
 
 router.get("/:id", (req, res) => {
   const { id } = req.params;
 
-  db("fruits")
+  db("cars")
     .where({ id })
     .first()
-    .then(fruit => {
-      res.json(fruit);
+    .then(cars => {
+      res.json(cars);
     })
     .catch(err => {
-      res.status(500).json({ message: "Failed to retrieve fruit" });
+      res.status(500).json({ message: "Failed to retrieve car" });
     });
 });
 
-router.post("/", (req, res) => {
-  const fruitData = req.body;
-  db("fruits")
-    .insert(fruitData)
-    .then(ids => {
-      db("fruits")
-        .where({ id: ids[0] })
-        .then(newFruitEntry => {
-          res.status(201).json(newFruitEntry);
-        });
+router.post('/', (req, res) => {
+    let newCar = {
+        vin: req.body.vin,
+        make: req.body.make,
+        model: req.body.model,
+        mileage: req.body.mileage,
+        transmission: req.body.transmission,
+        title_status: req.body.title_status
+    }
+    db('cars').insert(newCar)
+    .then(car => {
+        res.status(200).json(car)
     })
     .catch(err => {
-      console.log("POST error", err);
-      res.status(500).json({ message: "Failed to store data" });
-    });
-});
+        res.status(500).json({ message: "Failed to retrieve car" });
+      });
+})
 
 module.exports = router;
